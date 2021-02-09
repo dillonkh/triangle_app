@@ -2,20 +2,23 @@
   <v-stage ref="stage" :config="stageSize">
     <v-layer>
       <v-shape
+        v-if="show"
         :config="{
           sceneFunc: function(context, shape) {
             context.beginPath();
             context.moveTo(0, 0);
-            context.lineTo(sideA, 0);
-            context.lineTo(sideA, sideB);
+            context.lineTo(sideA + 0, 0);
+            context.lineTo(
+              sideA + sideB * Math.cos(degreesToRadians(180 - angleC)),
+              sideB * Math.sin(degreesToRadians(180 - angleC))
+            );
             context.closePath();
 
-            // special Konva.js method
             context.fillStrokeShape(shape);
           },
           fill: '#00D2FF',
           stroke: 'black',
-          strokeWidth: 4,
+          strokeWidth: 2,
         }"
       />
     </v-layer>
@@ -23,8 +26,8 @@
 </template>
 
 <script>
-const width = 500;
-const height = 500;
+const width = 1000;
+const height = 1000;
 
 export default {
   name: "TriangleCanvas",
@@ -32,6 +35,10 @@ export default {
     sideA: Number,
     sideB: Number,
     sideC: Number,
+    angleA: Number,
+    angleB: Number,
+    angleC: Number,
+    show: Boolean,
   },
   data() {
     return {
@@ -41,8 +48,11 @@ export default {
       },
     };
   },
-  mounted() {
-    console.log("reload");
+  methods: {
+    degreesToRadians(degrees) {
+      let pi = Math.PI;
+      return degrees * (pi / 180);
+    },
   },
 };
 </script>

@@ -6,18 +6,29 @@
           <TriangleInputForm @change="inputChanged" />
         </v-row>
         <v-row>
-          <div>
-            <p>{{ sideType }}</p>
-            <p>{{ angleType }}</p>
+          <div v-if="isValid">
+            <p>Valid {{ sideType }} {{ angleType }} Triangle!</p>
+            <p>
+              Angles:
+              {{ angleA.toFixed(2) }}° {{ angleB.toFixed(2) }}°
+              {{ angleC.toFixed(2) }}°
+            </p>
+          </div>
+          <div v-else>
+            <p>Not a Valid Triangle</p>
           </div>
         </v-row>
       </v-col>
       <v-col>
         <TriangleCanvas
           :key="triangleCanvasKey"
-          :side-a="sideA"
-          :side-b="sideB"
-          :side-c="sideC"
+          :sideA="sideA"
+          :sideB="sideB"
+          :sideC="sideC"
+          :angleA="angleA"
+          :angleB="angleB"
+          :angleC="angleC"
+          :show="isValid"
         />
       </v-col>
     </v-row>
@@ -41,22 +52,37 @@ export default {
       sideA: 0,
       sideB: 0,
       sideC: 0,
+      angleA: 0,
+      angleB: 0,
+      angleC: 0,
       triangleCanvasKey: "",
+      isValid: false,
     };
   },
   methods: {
     inputChanged({ a, b, c }) {
-      let isValidTriangle = this.validateTriangle(a, b, c);
+      let isValidTriangle = this.validateTriangle(
+        parseInt(a),
+        parseInt(b),
+        parseInt(c)
+      );
       if (isValidTriangle) {
         this.getTriangleInfo(a, b, c);
         this.drawTriangle(a, b, c);
+        this.isValid = true;
+      } else {
+        this.isValid = false;
+        this.sideType = "";
+        this.angleType = "";
+
+        this.angleA = 0;
+        this.angleB = 0;
+        this.angleC = 0;
       }
     },
     validateTriangle(a, b, c) {
       if (a && b && c) {
-        let list = [a, b, c];
-        list.sort();
-        if (list[2] > list[0] + list[1]) {
+        if (a + b > c && a + c > b && b + c > a) {
           return true;
         } else {
           return false;
@@ -67,6 +93,10 @@ export default {
     },
     getTriangleInfo(a, b, c) {
       // side info
+      this.sideA = parseInt(a);
+      this.sideB = parseInt(b);
+      this.sideC = parseInt(c);
+
       if (a !== b && b !== c) {
         this.sideType = "Scalene";
       } else if (this.isIsoceles(a, b, c)) {
@@ -76,32 +106,59 @@ export default {
       }
 
       // degree info
-      //   C = arccos ((a2 + b2 - c2) / 2ab)
+      // get Degree for C
+      let cInRadians = Math.acos(
+        (parseInt(Math.pow(a, 2)) +
+          parseInt(Math.pow(b, 2)) -
+          parseInt(Math.pow(c, 2))) /
+          (2 * parseInt(a) * parseInt(b))
+      );
+      let cInDegrees = this.radiansToDegrees(cInRadians);
 
-      //   let C = Math.acos(
-      //     ((parseInt(Math.pow(a, 2)) +
-      //       parseInt(Math.pow(b, 2)) +
-      //       parseInt(Math.pow(c, 2))) /
-      //       2) *
-      //       parseInt(a) *
-      //       parseInt(b)
-      //   );
-      //   console.log(C);
+      // get Degree for A
+      let aInRadians = Math.acos(
+        (parseInt(Math.pow(b, 2)) +
+          parseInt(Math.pow(c, 2)) -
+          parseInt(Math.pow(a, 2))) /
+          (2 * parseInt(b) * parseInt(c))
+      );
+      let aInDegrees = this.radiansToDegrees(aInRadians);
+
+      // the the angles
+      this.angleA = aInDegrees;
+      this.angleB = 180 - (aInDegrees + cInDegrees);
+      this.angleC = cInDegrees;
+
+      // set the triangle angle type
+      if (this.angleA < 90 && this.angleB < 90 && this.angleC < 90) {
+        this.angleType = "Acute";
+      } else if (this.angleA > 90 || this.angleB > 90 || this.angleC > 90) {
+        this.angleType = "Obtuse";
+      } else if (
+        this.angleA === 90 ||
+        this.angleB === 90 ||
+        this.angleC === 90
+      ) {
+        this.angleType = "Right";
+      }
+    },
+    radiansToDegrees(radians) {
+      let pi = Math.PI;
+      return radians * (180 / pi);
     },
     isIsoceles(a, b, c) {
-      if (a === b && a != c) {
+      if (a == b && a != c) {
         return true;
-      } else if (a === c && a != b) {
+      } else if (a == c && a != b) {
+        return true;
+      } else if (b === c && b != a) {
         return true;
       } else {
         return false;
       }
     },
     drawTriangle(a, b, c) {
-      this.sideA = parseInt(a);
-      this.sideB = parseInt(b);
-      this.sideC = parseInt(c);
-
+      // just resets the key so that the component will redraw with the updated info
       this.triangleCanvasKey = a + b + c;
     },
   },
