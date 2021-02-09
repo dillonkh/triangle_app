@@ -10,8 +10,8 @@
             <p>Valid {{ sideType }} {{ angleType }} Triangle!</p>
             <p>
               Angles:
-              {{ angleA.toFixed(2) }}° {{ angleB.toFixed(2) }}°
-              {{ angleC.toFixed(2) }}°
+              {{ angleA.toFixed(0) }}° {{ angleB.toFixed(0) }}°
+              {{ angleC.toFixed(0) }}°
             </p>
           </div>
           <div v-else>
@@ -93,6 +93,12 @@ export default {
     },
     getTriangleInfo(a, b, c) {
       // side info
+      this.getSideInfo(a, b, c);
+
+      // degree info
+      this.getAngleInfo(a, b, c);
+    },
+    getSideInfo(a, b, c) {
       this.sideA = parseInt(a);
       this.sideB = parseInt(b);
       this.sideC = parseInt(c);
@@ -104,8 +110,8 @@ export default {
       } else if (a === b && b === c) {
         this.sideType = "Equilateral";
       }
-
-      // degree info
+    },
+    getAngleInfo(a, b, c) {
       // get Degree for C
       let cInRadians = Math.acos(
         (parseInt(Math.pow(a, 2)) +
@@ -125,9 +131,9 @@ export default {
       let aInDegrees = this.radiansToDegrees(aInRadians);
 
       // the the angles
-      this.angleA = aInDegrees;
-      this.angleB = 180 - (aInDegrees + cInDegrees);
-      this.angleC = cInDegrees;
+      this.angleA = Math.round(aInDegrees);
+      this.angleB = Math.round(180 - (aInDegrees + cInDegrees));
+      this.angleC = Math.round(cInDegrees);
 
       // set the triangle angle type
       if (this.angleA < 90 && this.angleB < 90 && this.angleC < 90) {
