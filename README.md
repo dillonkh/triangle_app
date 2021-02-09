@@ -24,7 +24,7 @@ yarn lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Functionality
-```
+
 Enter three side lengths of a triangle. If the three lengths can make a valid triangle, the app displays the triangle along with the three angles in degrees and the type of triangle
-```
+
 ![](triangle_app.gif)
