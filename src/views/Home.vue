@@ -96,7 +96,7 @@ export default {
       this.getSideInfo(a, b, c);
 
       // degree info
-      this.getAngleInfo(a, b, c);
+      this.getAngleInfo(parseFloat(a), parseFloat(b), parseFloat(c));
     },
     getSideInfo(a, b, c) {
       this.sideA = parseInt(a);
@@ -107,43 +107,62 @@ export default {
         this.sideType = "Scalene";
       } else if (this.isIsoceles(a, b, c)) {
         this.sideType = "Isoceles";
-      } else if (a === b && b === c) {
+      } else if (a == b && b == c) {
         this.sideType = "Equilateral";
       }
     },
-    getAngleInfo(a, b, c) {
+    getAngleInfo(aLen, bLen, cLen) {
       // get Degree for C
+      let sideList = [aLen, bLen, cLen];
+      sideList.sort();
+
+      let a = sideList[0];
+      let b = sideList[1];
+      let c = sideList[2];
+
       let cInRadians = Math.acos(
-        (parseInt(Math.pow(a, 2)) +
-          parseInt(Math.pow(b, 2)) -
-          parseInt(Math.pow(c, 2))) /
-          (2 * parseInt(a) * parseInt(b))
+        (Math.pow(a, 2) + Math.pow(b, 2) - Math.pow(c, 2)) / (2 * a * b)
       );
       let cInDegrees = this.radiansToDegrees(cInRadians);
 
       // get Degree for A
       let aInRadians = Math.acos(
-        (parseInt(Math.pow(b, 2)) +
-          parseInt(Math.pow(c, 2)) -
-          parseInt(Math.pow(a, 2))) /
-          (2 * parseInt(b) * parseInt(c))
+        (Math.pow(b, 2) + Math.pow(c, 2) - Math.pow(a, 2)) / (2 * b * c)
       );
+
       let aInDegrees = this.radiansToDegrees(aInRadians);
 
+      // get Degree for A
+      let bInRadians = Math.acos(
+        (Math.pow(c, 2) + Math.pow(a, 2) - Math.pow(b, 2)) / (2 * c * a)
+      );
+
+      let bInDegrees = this.radiansToDegrees(bInRadians);
+
       // the the angles
-      this.angleA = Math.round(aInDegrees);
-      this.angleB = Math.round(180 - (aInDegrees + cInDegrees));
-      this.angleC = Math.round(cInDegrees);
+      this.angleA = aInDegrees;
+      this.angleB = bInDegrees;
+      this.angleC = cInDegrees;
+
+      console.log(this.angleC.toFixed(0) == 90);
 
       // set the triangle angle type
-      if (this.angleA < 90 && this.angleB < 90 && this.angleC < 90) {
+      if (
+        this.angleA.toFixed(0) < 90 &&
+        this.angleB.toFixed(0) < 90 &&
+        this.angleC.toFixed(0) < 90
+      ) {
         this.angleType = "Acute";
-      } else if (this.angleA > 90 || this.angleB > 90 || this.angleC > 90) {
+      } else if (
+        this.angleA.toFixed(0) > 90 ||
+        this.angleB.toFixed(0) > 90 ||
+        this.angleC.toFixed(0) > 90
+      ) {
         this.angleType = "Obtuse";
       } else if (
-        this.angleA === 90 ||
-        this.angleB === 90 ||
-        this.angleC === 90
+        this.angleA.toFixed(0) == 90 ||
+        this.angleB.toFixed(0) == 90 ||
+        this.angleC.toFixed(0) == 90
       ) {
         this.angleType = "Right";
       }
@@ -157,7 +176,7 @@ export default {
         return true;
       } else if (a == c && a != b) {
         return true;
-      } else if (b === c && b != a) {
+      } else if (b == c && b != a) {
         return true;
       } else {
         return false;
