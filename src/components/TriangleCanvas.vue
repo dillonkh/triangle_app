@@ -34,6 +34,7 @@ export default {
       stageSize: {
         width: width,
         height: height,
+        // these lenghts are used for scaling
         lenA: 0,
         lenB: 0,
         lenC: 0,
@@ -41,17 +42,11 @@ export default {
     };
   },
   mounted() {
-    // if (this.sideA > this.width || this.sideB > this.width || this.sideC > this.width) {
-    //   this.scaleSides()
-    // } else if (this.sideA < 100 || this.sideB < 100 || this.sideC < 100) {
-    //   this.sideA = this.sideA * 10;
-    //   this.sideB = this.sideB * 10;
-    //   this.sideC = this.sideC * 10;
-    // }
     this.scaleSides();
   },
   methods: {
     sceneFunc(context, shape) {
+      // this draws the actual shape
       context.beginPath();
       context.moveTo(0, 0);
       context.lineTo(this.lenA + 0, 0);
@@ -69,6 +64,8 @@ export default {
       return degrees * (pi / 180);
     },
     scaleSides() {
+      // makes the longest side = to the width of the canvas and
+      //   scales all other sides accordingly
       let sideList = [
         parseInt(this.sideA),
         parseInt(this.sideB),
@@ -76,7 +73,6 @@ export default {
       ];
       sideList.sort();
       let longestSide = sideList[sideList.length - 1];
-      console.log(sideList);
 
       let scaleFactor = longestSide / width;
 
