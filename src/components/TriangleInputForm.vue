@@ -30,9 +30,6 @@
         ></v-text-field>
       </div>
     </v-row>
-    <v-row>
-      <div>A: {{ sideA }} B: {{ sideB }} C: {{ sideC }}</div>
-    </v-row>
   </v-container>
 </template>
 
